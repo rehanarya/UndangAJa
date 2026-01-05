@@ -5,29 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Editor Undangan - UndangAja</title>
 
-    <!-- 1. FONT: Plus Jakarta Sans, Playfair Display, Great Vibes -->
+    <!-- FONT -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Great+Vibes&display=swap" rel="stylesheet" />
 
-    <!-- 2. ICON: Phosphor Icons -->
+    <!-- ICON -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
-    <!-- 3. STYLE: Tailwind CSS & Custom Files -->
+    <!-- Tailwind CSS & Custom Files -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Link ke Custom CSS -->
     <link rel="stylesheet" href="style.css" />
-    <!-- Link ke Custom JS (Tailwind Config, Logic Editor) -->
     <script src="style.js"></script>
-
-    <!-- 4. LIBRARIES: Alpine.js & SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   </head>
 
-  <body class="font-sans text-gray-600 bg-surface antialiased overflow-hidden h-screen" x-data="invitationEditor()" @scroll.window="scrolled = (window.pageYOffset > 20)">
-    
+  <body class="font-sans text-gray-600 bg-surface antialiased overflow-x-hidden md:h-screen md:overflow-hidden" x-data="invitationEditor()" @scroll.window="scrolled = (window.pageYOffset > 20)">
     <!-- NAVBAR -->
     <nav :class="scrolled ? 'bg-white/80 backdrop-blur-md shadow-sm py-4' : 'bg-transparent py-6'" class="fixed w-full top-0 z-50 transition-all duration-300">
       <div class="container mx-auto px-6 flex justify-between items-center">
@@ -48,11 +42,6 @@
 
         <!-- CTA Button (Save Action) -->
         <div class="flex items-center gap-3">
-          <!-- Mobile Preview Toggle (Only visible on mobile) -->
-          <button @click="showPreviewMobile = !showPreviewMobile" class="md:hidden px-4 py-2 bg-gray-100 text-dark rounded-full text-sm font-bold">
-            <span x-text="showPreviewMobile ? 'Edit' : 'Preview'"></span>
-          </button>
-
           <!-- Simpan Button (Desktop & Mobile) -->
           <button @click="publishInvitation()" class="bg-dark text-white px-6 py-2.5 rounded-full font-medium text-sm hover:bg-gray-800 transition-all hover:shadow-lg transform hover:-translate-y-0.5 flex items-center gap-2">
             <span class="hidden sm:inline">Simpan Undangan</span>
@@ -76,10 +65,10 @@
       </div>
     </nav>
 
-    <!-- MAIN CONTENT -->
-    <main class="pt-24 flex h-screen">
-      <!-- LEFT PANEL: EDITOR -->
-      <div :class="showPreviewMobile ? 'hidden' : 'block'" class="w-full md:w-1/2 lg:w-5/12 h-full overflow-y-auto no-scrollbar bg-white border-r border-gray-200 p-6 pb-32 md:pb-6 z-10">
+    <!-- MAIN CONTENT -->>
+    <main class="pt-20 md:pt-24 flex flex-col md:flex-row h-auto md:h-screen">
+      <!-- LEFT PANEL: EDITOR & MOBILE PREVIEW -->
+      <div class="w-full md:w-1/2 lg:w-5/12 h-auto md:h-full overflow-y-auto no-scrollbar bg-white border-r border-gray-200 p-6 pb-32 md:pb-6 z-10">
         <div class="max-w-md mx-auto space-y-8 mt-4">
           <!-- TOMBOL KEMBALI -->
           <a href="catalog.html" class="inline-flex items-center gap-2 text-gray-500 hover:text-primary transition-colors font-medium text-sm group">
@@ -88,6 +77,103 @@
             </div>
             <span>Kembali ke Katalog</span>
           </a>
+          <!-- MOBILE PREVIEW AREA -->
+          <div class="md:hidden w-full bg-surface rounded-2xl border border-gray-200 p-4 shadow-inner">
+            <!-- Label & Toggle -->
+            <div class="flex justify-between items-center mb-3">
+              <div class="flex items-center gap-2 text-sm font-bold text-gray-400 uppercase tracking-wider"><i class="ph-fill ph-eye"></i> Live Preview</div>
+
+              <!-- Toggle Button -->
+              <div class="flex bg-gray-200 rounded-lg p-0.5">
+                <button @click="viewMode = 'mobile'" :class="viewMode === 'mobile' ? 'bg-white text-dark shadow-sm' : 'text-gray-500'" class="px-2 py-1 rounded-md text-[10px] font-bold transition-all flex items-center gap-1">
+                  <i class="ph-bold ph-device-mobile"></i> Mobile
+                </button>
+                <button @click="viewMode = 'desktop'" :class="viewMode === 'desktop' ? 'bg-white text-dark shadow-sm' : 'text-gray-500'" class="px-2 py-1 rounded-md text-[10px] font-bold transition-all flex items-center gap-1">
+                  <i class="ph-bold ph-monitor"></i> Desktop
+                </button>
+              </div>
+            </div>
+
+            <div class="relative mx-auto bg-white rounded-xl border-4 border-gray-800 shadow-xl overflow-hidden hero-pattern transition-all duration-300" :class="viewMode === 'mobile' ? 'w-[300px] h-[550px]' : 'w-full aspect-[4/3]'">
+              <div :class="viewMode === 'desktop' ? 'preview-desktop-on-mobile' : 'w-full h-full'">
+                <div
+                  :class="{
+          'bg-theme-botanic': currentThemeId === 'botanic',
+          'bg-theme-luxury': currentThemeId === 'luxury',
+          'bg-theme-traditional': currentThemeId === 'traditional',
+          'bg-theme-floral': currentThemeId === 'floral',
+          'bg-theme-minimalist': currentThemeId === 'minimalist',
+          'overflow-y-auto': viewMode === 'mobile',    /* Scroll aktif di HP */
+          'overflow-hidden': viewMode === 'desktop'     /* Scroll mati di Desktop */
+      }"
+                  class="w-full h-full flex flex-col relative no-scrollbar transition-all duration-300"
+                >
+                  <div class="w-full flex flex-col items-center text-center" :class="viewMode === 'mobile' ? 'min-h-full justify-center py-8 px-5 gap-6' : 'h-full justify-between py-10 px-8'">
+                    <div class="shrink-0 w-full">
+                      <p class="uppercase tracking-[0.2em] font-sans text-gray-500 mb-1" :class="[currentThemeId === 'luxury' ? 'text-yellow-600' : '', viewMode === 'mobile' ? 'text-[9px]' : 'text-xs md:text-sm']">
+                        The Wedding Celebration Of
+                      </p>
+                    </div>
+
+                    <div class="flex flex-col items-center justify-center w-full" :class="viewMode === 'desktop' ? 'flex-grow justify-center gap-3' : 'gap-4'">
+                      <div class="flex flex-col items-center justify-center w-full gap-2">
+                        <div class="flex flex-col items-center">
+                          <h2 class="font-script leading-none" :class="viewMode === 'mobile' ? 'text-4xl' : 'text-5xl'" style="font-family: 'Great Vibes', cursive" :style="{ color: data.textColor }">
+                            <span x-text="data.groomNick || 'Romeo'"></span>
+                          </h2>
+                          <p
+                            class="font-serif tracking-wide text-gray-600 mt-1"
+                            :class="[currentThemeId === 'luxury' ? 'text-gray-300' : '', viewMode === 'mobile' ? 'text-[10px]' : 'text-sm']"
+                            x-text="data.groomFull || 'Romeo Montague, S.T.'"
+                          ></p>
+                        </div>
+
+                        <div class="font-serif leading-none opacity-50" :class="viewMode === 'mobile' ? 'text-xl' : 'text-2xl'" :style="{ color: data.textColor }">&</div>
+
+                        <div class="flex flex-col items-center">
+                          <h2 class="font-script leading-none" :class="viewMode === 'mobile' ? 'text-4xl' : 'text-5xl'" style="font-family: 'Great Vibes', cursive" :style="{ color: data.textColor }">
+                            <span x-text="data.brideNick || 'Juliet'"></span>
+                          </h2>
+                          <p
+                            class="font-serif tracking-wide text-gray-600 mt-1"
+                            :class="[currentThemeId === 'luxury' ? 'text-gray-300' : '', viewMode === 'mobile' ? 'text-[10px]' : 'text-sm']"
+                            x-text="data.brideFull || 'Juliet Capulet, S.Kom.'"
+                          ></p>
+                        </div>
+                      </div>
+
+                      <div class="w-full shrink-0">
+                        <div class="h-px bg-gray-200 mx-auto mb-3 w-1/3" :style="{ backgroundColor: data.textColor, opacity: 0.3 }"></div>
+                        <div class="inline-block border-y border-gray-200 py-1.5 px-6" :class="[currentThemeId === 'luxury' ? 'border-yellow-900/50' : '']">
+                          <p class="font-serif text-dark font-bold" :class="viewMode === 'mobile' ? 'text-sm' : 'text-lg'" x-text="formatDate(data.date)"></p>
+                        </div>
+                      </div>
+
+                      <div class="w-full max-w-lg mx-auto mt-2" :class="viewMode === 'mobile' ? 'flex flex-col gap-4' : 'grid grid-cols-2 gap-8'">
+                        <div class="text-center">
+                          <p class="font-bold text-dark uppercase mb-1 tracking-wider" :class="viewMode === 'mobile' ? 'text-[10px]' : 'text-xs'">Waktu</p>
+                          <p class="text-gray-500" :class="viewMode === 'mobile' ? 'text-[10px]' : 'text-xs'" x-text="(data.timeStart || '08:00') + ' - ' + (data.timeEnd || 'Selesai') + ' WIB'"></p>
+                        </div>
+                        <div class="text-center">
+                          <p class="font-bold text-dark uppercase mb-1 tracking-wider" :class="viewMode === 'mobile' ? 'text-[10px]' : 'text-xs'">Lokasi</p>
+                          <p class="text-gray-500 leading-tight line-clamp-2 px-2" :class="viewMode === 'mobile' ? 'text-[10px]' : 'text-xs'" x-text="data.location || 'Lokasi acara'"></p>
+                        </div>
+                      </div>
+
+                      <div class="bg-white/50 backdrop-blur-sm rounded-lg border border-gray-100 p-3 w-full max-w-md mx-auto mt-2">
+                        <p class="text-gray-600 italic leading-relaxed font-serif text-xs line-clamp-3" x-text="data.quote || 'Tulis kutipan indah di sini...'"></p>
+                      </div>
+                    </div>
+
+                    <div class="shrink-0 w-full pt-4">
+                      <div class="text-center text-gray-400 tracking-widest uppercase" :class="viewMode === 'mobile' ? 'text-[8px]' : 'text-[10px]'">Powered by UndangAja</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- MOBILE PREVIEW AREA -->
 
           <!-- Section: Tampilan -->
           <div class="bg-surface p-6 rounded-2xl border border-gray-100">
@@ -97,8 +183,7 @@
             </div>
 
             <div class="space-y-6">
-              <!-- Mode View Toggle -->
-              <div>
+              <div class="hidden md:block">
                 <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Mode Preview</label>
                 <div class="grid grid-cols-2 gap-2 bg-white p-1 rounded-xl border border-gray-200">
                   <button
@@ -118,7 +203,6 @@
                 </div>
               </div>
 
-              <!-- Color Picker -->
               <div>
                 <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Warna Teks Utama</label>
                 <div class="flex items-center gap-4 bg-white p-3 rounded-xl border border-gray-200">
@@ -237,8 +321,8 @@
         </div>
       </div>
 
-      <!-- RIGHT PANEL: LIVE PREVIEW (Hero Pattern Background) -->
-      <div :class="showPreviewMobile ? 'block fixed inset-0 z-40 bg-gray-50' : 'hidden md:flex'" class="w-full md:w-1/2 lg:w-7/12 h-full items-center justify-center p-4 md:p-8 relative overflow-hidden hero-pattern">
+      <!-- RIGHT PANEL: LIVE PREVIEW (PC VIEW) -->
+      <div class="hidden md:flex w-full md:w-1/2 lg:w-7/12 h-full items-center justify-center p-4 md:p-8 relative overflow-hidden hero-pattern">
         <!-- PREVIEW CONTAINER -->
         <div
           class="preview-container bg-white shadow-2xl relative overflow-hidden transition-all duration-500 flex flex-col"
@@ -265,12 +349,7 @@
               <div class="flex flex-col items-center justify-center gap-2 md:gap-4 w-full">
                 <!-- GROOM -->
                 <div class="flex flex-col items-center">
-                  <h2
-                    class="font-script leading-none mb-0.5"
-                    :class="viewMode === 'mobile' ? 'text-3xl' : 'text-4xl md:text-5xl'"
-                    style="font-family: 'Great Vibes', cursive;"
-                    :style="{ color: data.textColor }"
-                  >
+                  <h2 class="font-script leading-none mb-0.5" :class="viewMode === 'mobile' ? 'text-3xl' : 'text-4xl md:text-5xl'" style="font-family: 'Great Vibes', cursive" :style="{ color: data.textColor }">
                     <span x-text="data.groomNick || 'Romeo'"></span>
                   </h2>
                   <p
@@ -281,22 +360,11 @@
                 </div>
 
                 <!-- AMPERSAND -->
-                <div
-                  class="font-serif text-gray-300 leading-none"
-                  :class="viewMode === 'mobile' ? 'text-xl' : 'text-2xl'"
-                  :style="{ color: data.textColor, opacity: 0.5 }"
-                >
-                  &
-                </div>
+                <div class="font-serif text-gray-300 leading-none" :class="viewMode === 'mobile' ? 'text-xl' : 'text-2xl'" :style="{ color: data.textColor, opacity: 0.5 }">&</div>
 
                 <!-- BRIDE -->
                 <div class="flex flex-col items-center">
-                  <h2
-                    class="font-script leading-none mb-0.5"
-                    :class="viewMode === 'mobile' ? 'text-3xl' : 'text-4xl md:text-5xl'"
-                    style="font-family: 'Great Vibes', cursive;"
-                    :style="{ color: data.textColor }"
-                  >
+                  <h2 class="font-script leading-none mb-0.5" :class="viewMode === 'mobile' ? 'text-3xl' : 'text-4xl md:text-5xl'" style="font-family: 'Great Vibes', cursive" :style="{ color: data.textColor }">
                     <span x-text="data.brideNick || 'Juliet'"></span>
                   </h2>
                   <p
