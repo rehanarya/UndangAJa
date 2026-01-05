@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pilih Tema Undangan - UndangAja</title>
+
+    <!-- 1. FONT: Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+    <!-- 2. ICON: Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- 3. ANIMATION: AOS CSS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+
+    <!-- 4. STYLE: Tailwind CSS & Custom Files -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Link ke Custom CSS -->
+    <link rel="stylesheet" href="style.css" />
+    <!-- Link ke Custom JS (Tailwind Config, AOS, Logic) -->
+    <script src="style.js"></script>
+
+    <!-- 5. INTERACTIVITY: Alpine.js -->
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  </head>
+  
+  <body
+    class="font-sans text-gray-600 bg-surface antialiased overflow-x-hidden"
+    x-data="{ 
+          mobileMenuOpen: false, 
+          scrolled: false,
+          activeCategory: 'all',
+          searchQuery: '' 
+      }"
+    @scroll.window="scrolled = (window.pageYOffset > 20)"
+  >
+    <!-- NAVBAR -->
+    <nav :class="scrolled ? 'bg-white/80 backdrop-blur-md shadow-sm py-4' : 'bg-transparent py-6'" class="fixed w-full top-0 z-50 transition-all duration-300">
+      <div class="container mx-auto px-6 flex justify-between items-center">
+        <!-- Logo -->
+        <a href="index.html" class="flex items-center gap-2 group">
+          <div class="w-10 h-10 bg-primary text-white rounded-xl flex items-center justify-center text-2xl group-hover:rotate-12 transition-transform duration-300">
+            <i class="ph-bold ph-heart"></i>
+          </div>
+          <span class="text-xl font-bold text-dark tracking-tight">Undang<span class="text-secondary">Aja</span></span>
+        </a>
+
+        <!-- Desktop Menu -->
+        <div class="hidden md:flex items-center gap-8 font-medium text-sm text-gray-500">
+          <a href="index.html" class="hover:text-primary transition-colors">Beranda</a>
+          <a href="#" class="text-primary font-bold">Katalog Tema</a>
+          <a href="testimoni.html" class="hover:text-primary transition-colors">Testimoni</a>
+        </div>
+
+        <!-- CTA Button -->
+        <div class="hidden md:block">
+          <a href="#" class="bg-dark text-white px-6 py-2.5 rounded-full font-medium text-sm hover:bg-gray-800 transition-all hover:shadow-lg transform hover:-translate-y-0.5"> Buat Undangan </a>
+        </div>
+
+        <!-- Mobile Hamburger -->
+        <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden text-2xl text-dark">
+          <i :class="mobileMenuOpen ? 'ph ph-x' : 'ph ph-list'"></i>
+        </button>
+      </div>
+
+      <!-- Mobile Menu Dropdown -->
+      <div x-show="mobileMenuOpen" x-transition class="md:hidden bg-white border-t absolute w-full shadow-xl">
+        <div class="flex flex-col p-6 gap-4 font-medium">
+          <a href="index.html" class="text-gray-600">Beranda</a>
+          <a href="#" class="text-primary font-bold">Katalog Tema</a>
+          <a href="testimoni.html" class="text-gray-600">Testimoni</a>
+          <a href="#" class="bg-primary text-white text-center py-3 rounded-lg">Buat Undangan</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section class="hero-pattern pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden relative">
+      <div class="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-secondary/10 rounded-full blur-3xl mix-blend-multiply animate-pulse"></div>
+      <div class="absolute bottom-0 left-0 -ml-20 -mb-20 w-96 h-96 bg-primary/10 rounded-full blur-3xl mix-blend-multiply animate-pulse" style="animation-delay: 2s"></div>
+
+      <div class="container mx-auto px-6 relative z-10 text-center">
+        <div class="inline-flex items-center gap-2 bg-white border border-gray-200 rounded-full px-4 py-1.5 mb-6 shadow-sm" data-aos="fade-down">
+          <span class="flex h-2 w-2 rounded-full bg-secondary animate-pulse"></span>
+          <span class="text-xs font-semibold text-gray-500 tracking-wide uppercase">Koleksi Eksklusif 2026</span>
+        </div>
+
+        <h1 class="font-serif text-5xl lg:text-7xl font-bold text-dark leading-[1.1] mb-6" data-aos="fade-up">
+          Temukan Gaya <br />
+          <span class="italic text-primary">Undangan</span> Impianmu.
+        </h1>
+
+        <p class="text-lg text-gray-500 mb-12 leading-relaxed max-w-2xl mx-auto" data-aos="fade-up" data-aos-delay="100">
+          Pilih template yang paling sesuai dengan kepribadian Anda. Semua template dapat dikustomisasi sepenuhnya dengan mudah dan cepat.
+        </p>
+
+        <!-- SEARCH & FILTER TOOLBAR -->
+        <div class="max-w-3xl mx-auto" data-aos="fade-up" data-aos-delay="200">
+          <div class="relative mb-8 group">
+            <div class="absolute inset-0 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <div class="relative bg-white rounded-full shadow-lg border border-gray-100 flex items-center p-2 hover:shadow-xl transition-shadow">
+              <i class="ph ph-magnifying-glass text-gray-400 text-2xl ml-4"></i>
+              <input x-model="searchQuery" type="text" placeholder="Cari tema (contoh: Javanese, Gold, Rustic)..." class="w-full px-4 py-3 outline-none bg-transparent text-dark placeholder-gray-400 text-lg" />
+              <button class="bg-dark text-white px-6 py-3 rounded-full font-medium hover:bg-primary transition-colors flex items-center gap-2">Cari</button>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap justify-center gap-3">
+            <button
+              @click="activeCategory = 'all'"
+              :class="activeCategory === 'all' ? 'bg-dark text-white shadow-lg scale-105' : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'"
+              class="px-6 py-2.5 rounded-full text-sm font-medium transition-all transform hover:-translate-y-0.5"
+            >
+              Semua
+            </button>
+            <button
+              @click="activeCategory = 'rustic'"
+              :class="activeCategory === 'rustic' ? 'bg-primary text-white shadow-lg scale-105' : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'"
+              class="px-6 py-2.5 rounded-full text-sm font-medium transition-all transform hover:-translate-y-0.5"
+            >
+              Rustic & Floral
+            </button>
+            <button
+              @click="activeCategory = 'elegant'"
+              :class="activeCategory === 'elegant' ? 'bg-primary text-white shadow-lg scale-105' : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'"
+              class="px-6 py-2.5 rounded-full text-sm font-medium transition-all transform hover:-translate-y-0.5"
+            >
+              Elegan & Mewah
+            </button>
+            <button
+              @click="activeCategory = 'traditional'"
+              :class="activeCategory === 'traditional' ? 'bg-primary text-white shadow-lg scale-105' : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'"
+              class="px-6 py-2.5 rounded-full text-sm font-medium transition-all transform hover:-translate-y-0.5"
+            >
+              Adat Tradisional
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CATALOG GRID -->
+    <section class="py-12 bg-white min-h-screen relative z-10">
+      <div class="container mx-auto px-6">
+        <div class="flex justify-between items-end mb-10 border-b border-gray-100 pb-4">
+          <h3 class="font-serif text-2xl font-bold text-dark">Hasil Pencarian</h3>
+          <p class="text-sm text-gray-400" x-text="searchQuery ? 'Menampilkan hasil untuk: ' + searchQuery : 'Menampilkan semua koleksi'"></p>
+        </div>
+
+        <!-- Grid Container -->
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <!-- TEMA 1: Botanic Sage (Fix Keywords) -->
+          <div
+            x-show="(activeCategory === 'all' || activeCategory === 'rustic') && 'botanic sage rustic hijau green alam nature aesthetic'.includes(searchQuery.toLowerCase())"
+            class="group bg-surface rounded-[2rem] overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 border border-transparent hover:border-gray-100 flex flex-col"
+            x-transition
+          >
+            <div class="relative overflow-hidden h-72">
+              <img src="https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&w=800&q=80" alt="Botanic Sage" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+              <div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-primary shadow-sm flex items-center gap-1"><i class="ph-fill ph-fire"></i> POPULER</div>
+            </div>
+
+            <div class="p-8 flex flex-col flex-grow">
+              <div class="flex justify-between items-start mb-2">
+                <div>
+                  <h3 class="font-serif text-2xl font-bold text-dark group-hover:text-primary transition-colors">Botanic Sage</h3>
+                  <p class="text-sm text-gray-400 mt-1">Rustic, Outdoor, Nature</p>
+                </div>
+              </div>
+
+              <div class="flex gap-2 my-6">
+                <div class="w-8 h-8 rounded-full bg-[#5D7066] border border-gray-200 shadow-sm" title="Sage Green"></div>
+                <div class="w-8 h-8 rounded-full bg-[#F5F5DC] border border-gray-200 shadow-sm" title="Beige"></div>
+                <div class="w-8 h-8 rounded-full bg-white border border-gray-200 shadow-sm" title="White"></div>
+              </div>
+
+              <button
+                onclick="selectTheme('botanic', 'Botanic Sage', '#5D7066')"
+                class="mt-auto w-full py-4 bg-white border border-gray-200 text-dark rounded-xl font-bold hover:bg-dark hover:text-white transition-all flex items-center justify-center gap-2 group-hover:shadow-lg"
+              >
+                Pilih Tema Ini <i class="ph-bold ph-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- TEMA 2: Royal Gold (Fix Keywords) -->
+          <div
+            x-show="(activeCategory === 'all' || activeCategory === 'elegant') && 'royal gold mewah emas luxury elegant premium black hitam'.includes(searchQuery.toLowerCase())"
+            class="group bg-surface rounded-[2rem] overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 border border-transparent hover:border-gray-100 flex flex-col"
+            x-transition
+          >
+            <div class="relative overflow-hidden h-72">
+              <img
+                src="https://images.unsplash.com/photo-1479669732031-affb2ce2d265?q=80&w=1632&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                alt="Royal Gold"
+                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+              />
+              <div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-primary shadow-sm flex items-center gap-1"><i class="ph-fill ph-fire"></i> POPULER</div>
+            </div>
+
+            <div class="p-8 flex flex-col flex-grow">
+              <div class="flex justify-between items-start mb-2">
+                <div>
+                  <h3 class="font-serif text-2xl font-bold text-dark group-hover:text-secondary transition-colors">Royal Gold</h3>
+                  <p class="text-sm text-gray-400 mt-1">Luxury, Hotel, Elegant</p>
+                </div>
+              </div>
+
+              <div class="flex gap-2 my-6">
+                <div class="w-8 h-8 rounded-full bg-black border border-gray-200 shadow-sm"></div>
+                <div class="w-8 h-8 rounded-full bg-[#D4AF37] border border-gray-200 shadow-sm"></div>
+              </div>
+
+              <button
+                onclick="selectTheme('luxury', 'Royal Gold', '#D4AF37')"
+                class="mt-auto w-full py-4 bg-white border border-gray-200 text-dark rounded-xl font-bold hover:bg-dark hover:text-white transition-all flex items-center justify-center gap-2 group-hover:shadow-lg"
+              >
+                Pilih Tema Ini <i class="ph-bold ph-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- TEMA 3: Javanese Heritage (Fix Keywords) -->
+          <div
+            x-show="(activeCategory === 'all' || activeCategory === 'traditional') && 'javanese heritage jawa adat batik tradisional klasik brown coklat culture'.includes(searchQuery.toLowerCase())"
+            class="group bg-surface rounded-[2rem] overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 border border-transparent hover:border-gray-100 flex flex-col"
+            x-transition
+          >
+            <div class="relative overflow-hidden h-72">
+              <img
+                src="https://images.unsplash.com/photo-1606800052052-a08af7148866?auto=format&fit=crop&w=800&q=80"
+                alt="Java Heritage"
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 group-hover:grayscale-0"
+              />
+              <div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-primary shadow-sm flex items-center gap-1"><i class="ph-fill ph-fire"></i> POPULER</div>
+            </div>
+
+            <div class="p-8 flex flex-col flex-grow">
+              <div class="flex justify-between items-start mb-2">
+                <div>
+                  <h3 class="font-serif text-2xl font-bold text-dark group-hover:text-primary transition-colors">Javanese Heritage</h3>
+                  <p class="text-sm text-gray-400 mt-1">Adat Jawa, Klasik</p>
+                </div>
+              </div>
+
+              <div class="flex gap-2 my-6">
+                <div class="w-8 h-8 rounded-full bg-[#593922] border border-gray-200 shadow-sm"></div>
+                <div class="w-8 h-8 rounded-full bg-[#B69666] border border-gray-200 shadow-sm"></div>
+              </div>
+
+              <button
+                onclick="selectTheme('traditional', 'Javanese Heritage', '#8B4513')"
+                class="mt-auto w-full py-4 bg-white border border-gray-200 text-dark rounded-xl font-bold hover:bg-dark hover:text-white transition-all flex items-center justify-center gap-2 group-hover:shadow-lg"
+              >
+                Pilih Tema Ini <i class="ph-bold ph-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- TEMA 4: White Minimalist (Fix Keywords) -->
+          <div
+            x-show="(activeCategory === 'all' || activeCategory === 'elegant') && 'white minimalist clean putih modern simple abu grey'.includes(searchQuery.toLowerCase())"
+            class="group bg-surface rounded-[2rem] overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 border border-transparent hover:border-gray-100 flex flex-col"
+            x-transition
+          >
+            <div class="relative overflow-hidden h-72">
+              <img src="https://images.unsplash.com/photo-1584610559454-14c70cd3b869?q=80&w=1471&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Minimalist" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+            </div>
+
+            <div class="p-8 flex flex-col flex-grow">
+              <div class="flex justify-between items-start mb-2">
+                <div>
+                  <h3 class="font-serif text-2xl font-bold text-dark group-hover:text-primary transition-colors">White Minimalist</h3>
+                  <p class="text-sm text-gray-400 mt-1">Clean, Modern, Simple</p>
+                </div>
+              </div>
+
+              <div class="flex gap-2 my-6">
+                <div class="w-8 h-8 rounded-full bg-gray-100 border border-gray-300 shadow-sm"></div>
+                <div class="w-8 h-8 rounded-full bg-gray-800 border border-gray-200 shadow-sm"></div>
+              </div>
+
+              <button
+                onclick="selectTheme('minimalist', 'White Minimalist', '#1F2937')"
+                class="mt-auto w-full py-4 bg-white border border-gray-200 text-dark rounded-xl font-bold hover:bg-dark hover:text-white transition-all flex items-center justify-center gap-2 group-hover:shadow-lg"
+              >
+                Pilih Tema Ini <i class="ph-bold ph-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- TEMA 5: Blushing Flora (Fix Keywords) -->
+          <div
+            x-show="(activeCategory === 'all' || activeCategory === 'rustic') && 'blushing flora pink floral bunga rose romantic garden merah muda'.includes(searchQuery.toLowerCase())"
+            class="group bg-surface rounded-[2rem] overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 border border-transparent hover:border-gray-100 flex flex-col"
+            x-transition
+          >
+            <div class="relative overflow-hidden h-72">
+              <img src="https://images.unsplash.com/photo-1522383225653-ed111181a951?auto=format&fit=crop&w=800&q=80" alt="Pink Floral" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+            </div>
+
+            <div class="p-8 flex flex-col flex-grow">
+              <div class="flex justify-between items-start mb-2">
+                <div>
+                  <h3 class="font-serif text-2xl font-bold text-dark group-hover:text-primary transition-colors">Blushing Flora</h3>
+                  <p class="text-sm text-gray-400 mt-1">Romantic, Garden</p>
+                </div>
+              </div>
+
+              <div class="flex gap-2 my-6">
+                <div class="w-8 h-8 rounded-full bg-pink-200 border border-gray-200 shadow-sm"></div>
+                <div class="w-8 h-8 rounded-full bg-pink-500 border border-gray-200 shadow-sm"></div>
+              </div>
+
+              <button
+                onclick="selectTheme('floral', 'Blushing Flora', '#BE185D')"
+                class="mt-auto w-full py-4 bg-white border border-gray-200 text-dark rounded-xl font-bold hover:bg-dark hover:text-white transition-all flex items-center justify-center gap-2 group-hover:shadow-lg"
+              >
+                Pilih Tema Ini <i class="ph-bold ph-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- TEMA 6: Coming Soon -->
+          <div
+            x-show="activeCategory === 'all'"
+            class="bg-surface rounded-[2rem] border-2 border-dashed border-gray-200 flex flex-col items-center justify-center text-center p-6 opacity-70 hover:opacity-100 hover:border-primary transition-all cursor-pointer group"
+            x-transition
+          >
+            <div class="w-20 h-20 rounded-full bg-white shadow-sm flex items-center justify-center text-gray-300 text-3xl mb-6 group-hover:text-primary group-hover:scale-110 transition-all">
+              <i class="ph-bold ph-plus"></i>
+            </div>
+            <h3 class="font-bold text-gray-400 text-xl group-hover:text-primary transition-colors">Tema Baru</h3>
+            <p class="text-sm text-gray-400 mt-2">Update setiap minggu</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-white border-t border-gray-100 pt-16 pb-8">
+      <div class="container mx-auto px-6">
+        <div class="grid md:grid-cols-4 gap-12 mb-12">
+          <div class="col-span-1 md:col-span-1">
+            <a href="#" class="flex items-center gap-2 mb-6">
+              <div class="w-8 h-8 bg-primary text-white rounded-lg flex items-center justify-center text-lg">
+                <i class="ph-bold ph-heart"></i>
+              </div>
+              <span class="text-xl font-bold text-dark tracking-tight">Undang<span class="text-secondary">Aja</span></span>
+            </a>
+            <p class="text-gray-400 text-sm leading-relaxed">Platform undangan digital #1 di Indonesia. Membantu pasangan merayakan cinta dengan cara yang lebih modern.</p>
+          </div>
+
+          <div>
+            <h5 class="font-bold text-dark mb-4">Tautan Cepat</h5>
+            <ul class="space-y-3 text-sm text-gray-500">
+              <li><a href="index.html" class="hover:text-primary">Beranda</a></li>
+              <li><a href="catalog.html" class="hover:text-primary">Katalog Tema</a></li>
+              <li><a href="testimoni.html" class="hover:text-primary">Testimoni</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <h5 class="font-bold text-dark mb-4">Sosial Media</h5>
+            <div class="flex gap-4">
+              <a
+                href="https://www.instagram.com/momo.photograph_?igsh=bXlubGhsdnZ6cnl0"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-primary hover:text-white transition-colors"
+              >
+                <i class="ph-fill ph-instagram-logo text-xl"></i>
+              </a>
+              <a
+                href="https://www.tiktok.com/@justlucian_?_r=1&_t=ZS-92oeFqxxYlG"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-primary hover:text-white transition-colors"
+              >
+                <i class="ph-fill ph-tiktok-logo text-xl"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="border-t border-gray-100 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-400">
+          <p>&copy; 2026 UndangAja. All rights reserved.</p>
+          <div class="flex gap-6">
+            <p>Dibuat Oleh Irfan & Rehan</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- AOS JS sudah diload via style.js -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  </body>
+</html>

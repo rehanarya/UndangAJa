@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Editor Undangan - UndangAja</title>
+
+    <!-- 1. FONT: Plus Jakarta Sans, Playfair Display, Great Vibes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Great+Vibes&display=swap" rel="stylesheet" />
+
+    <!-- 2. ICON: Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- 3. STYLE: Tailwind CSS & Custom Files -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Link ke Custom CSS -->
+    <link rel="stylesheet" href="style.css" />
+    <!-- Link ke Custom JS (Tailwind Config, Logic Editor) -->
+    <script src="style.js"></script>
+
+    <!-- 4. LIBRARIES: Alpine.js & SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  </head>
+
+  <body class="font-sans text-gray-600 bg-surface antialiased overflow-hidden h-screen" x-data="invitationEditor()" @scroll.window="scrolled = (window.pageYOffset > 20)">
+    
+    <!-- NAVBAR -->
+    <nav :class="scrolled ? 'bg-white/80 backdrop-blur-md shadow-sm py-4' : 'bg-transparent py-6'" class="fixed w-full top-0 z-50 transition-all duration-300">
+      <div class="container mx-auto px-6 flex justify-between items-center">
+        <!-- Logo -->
+        <a href="index.html" class="flex items-center gap-2 group">
+          <div class="w-10 h-10 bg-primary text-white rounded-xl flex items-center justify-center text-2xl group-hover:rotate-12 transition-transform duration-300">
+            <i class="ph-bold ph-heart"></i>
+          </div>
+          <span class="text-xl font-bold text-dark tracking-tight">Undang<span class="text-secondary">Aja</span></span>
+        </a>
+
+        <!-- Desktop Menu -->
+        <div class="hidden md:flex items-center gap-8 font-medium text-sm text-gray-500">
+          <a href="index.html" class="hover:text-primary transition-colors">Beranda</a>
+          <a href="catalog.html" class="text-primary font-bold">Katalog Tema</a>
+          <a href="testimoni.html" class="hover:text-primary transition-colors">Testimoni</a>
+        </div>
+
+        <!-- CTA Button (Save Action) -->
+        <div class="flex items-center gap-3">
+          <!-- Mobile Preview Toggle (Only visible on mobile) -->
+          <button @click="showPreviewMobile = !showPreviewMobile" class="md:hidden px-4 py-2 bg-gray-100 text-dark rounded-full text-sm font-bold">
+            <span x-text="showPreviewMobile ? 'Edit' : 'Preview'"></span>
+          </button>
+
+          <!-- Simpan Button (Desktop & Mobile) -->
+          <button @click="publishInvitation()" class="bg-dark text-white px-6 py-2.5 rounded-full font-medium text-sm hover:bg-gray-800 transition-all hover:shadow-lg transform hover:-translate-y-0.5 flex items-center gap-2">
+            <span class="hidden sm:inline">Simpan Undangan</span>
+            <span class="sm:hidden"><i class="ph-bold ph-floppy-disk"></i></span>
+          </button>
+
+          <!-- Mobile Hamburger -->
+          <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden text-2xl text-dark ml-2">
+            <i :class="mobileMenuOpen ? 'ph ph-x' : 'ph ph-list'"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Menu Dropdown -->
+      <div x-show="mobileMenuOpen" x-transition class="md:hidden bg-white border-t absolute w-full shadow-xl">
+        <div class="flex flex-col p-6 gap-4 font-medium">
+          <a href="index.html" class="text-gray-600">Beranda</a>
+          <a href="catalog.html" class="text-primary font-bold">Katalog Tema</a>
+          <a href="testimoni.html" class="text-gray-600">Testimoni</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main class="pt-24 flex h-screen">
+      <!-- LEFT PANEL: EDITOR -->
+      <div :class="showPreviewMobile ? 'hidden' : 'block'" class="w-full md:w-1/2 lg:w-5/12 h-full overflow-y-auto no-scrollbar bg-white border-r border-gray-200 p-6 pb-32 md:pb-6 z-10">
+        <div class="max-w-md mx-auto space-y-8 mt-4">
+          <!-- TOMBOL KEMBALI -->
+          <a href="catalog.html" class="inline-flex items-center gap-2 text-gray-500 hover:text-primary transition-colors font-medium text-sm group">
+            <div class="w-8 h-8 rounded-full bg-gray-100 group-hover:bg-primary group-hover:text-white flex items-center justify-center transition-all">
+              <i class="ph-bold ph-arrow-left"></i>
+            </div>
+            <span>Kembali ke Katalog</span>
+          </a>
+
+          <!-- Section: Tampilan -->
+          <div class="bg-surface p-6 rounded-2xl border border-gray-100">
+            <div class="flex items-center gap-3 mb-6 text-primary">
+              <i class="ph-duotone ph-paint-brush-broad text-2xl"></i>
+              <h2 class="font-serif font-bold text-xl text-dark">Tampilan</h2>
+            </div>
+
+            <div class="space-y-6">
+              <!-- Mode View Toggle -->
+              <div>
+                <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Mode Preview</label>
+                <div class="grid grid-cols-2 gap-2 bg-white p-1 rounded-xl border border-gray-200">
+                  <button
+                    @click="viewMode = 'desktop'"
+                    :class="viewMode === 'desktop' ? 'bg-dark text-white shadow-md' : 'text-gray-500 hover:bg-gray-50'"
+                    class="flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-bold transition-all"
+                  >
+                    <i class="ph-bold ph-monitor"></i> Desktop
+                  </button>
+                  <button
+                    @click="viewMode = 'mobile'"
+                    :class="viewMode === 'mobile' ? 'bg-dark text-white shadow-md' : 'text-gray-500 hover:bg-gray-50'"
+                    class="flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-bold transition-all"
+                  >
+                    <i class="ph-bold ph-device-mobile"></i> Mobile
+                  </button>
+                </div>
+              </div>
+
+              <!-- Color Picker -->
+              <div>
+                <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Warna Teks Utama</label>
+                <div class="flex items-center gap-4 bg-white p-3 rounded-xl border border-gray-200">
+                  <div class="relative overflow-hidden w-10 h-10 rounded-full border border-gray-200 shadow-sm cursor-pointer hover:scale-105 transition-transform">
+                    <input type="color" x-model="data.textColor" class="absolute -top-4 -left-4 w-20 h-20 cursor-pointer p-0 border-0" />
+                  </div>
+                  <span class="text-xs text-gray-500">Klik warna untuk mengubah<br />aksen teks undangan.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section: Data Mempelai -->
+          <div class="bg-surface p-6 rounded-2xl border border-gray-100">
+            <div class="flex items-center gap-3 mb-6 text-primary">
+              <i class="ph-duotone ph-heart text-2xl"></i>
+              <h2 class="font-serif font-bold text-xl text-dark">Mempelai</h2>
+            </div>
+
+            <div class="space-y-5">
+              <!-- Pria -->
+              <div>
+                <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Nama Panggilan Pria</label>
+                <input
+                  type="text"
+                  x-model="data.groomNick"
+                  class="w-full px-4 py-3 py-3 rounded-xl border border-gray-200 focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none text-sm bg-white transition-all"
+                  placeholder="Contoh: Romeo"
+                />
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Nama Lengkap Pria</label>
+                <input
+                  type="text"
+                  x-model="data.groomFull"
+                  class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none text-sm bg-white transition-all"
+                  placeholder="Contoh: Romeo Montague, S.T."
+                />
+              </div>
+
+              <div class="flex items-center gap-4 py-2 opacity-50">
+                <div class="h-px bg-gray-300 flex-grow"></div>
+                <i class="ph-fill ph-heart text-gray-400 text-xs"></i>
+                <div class="h-px bg-gray-300 flex-grow"></div>
+              </div>
+
+              <!-- Wanita -->
+              <div>
+                <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Nama Panggilan Wanita</label>
+                <input
+                  type="text"
+                  x-model="data.brideNick"
+                  class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none text-sm bg-white transition-all"
+                  placeholder="Contoh: Juliet"
+                />
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Nama Lengkap Wanita</label>
+                <input
+                  type="text"
+                  x-model="data.brideFull"
+                  class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary focus:ring-4 focus:ring-primary/10 outline-none text-sm bg-white transition-all"
+                  placeholder="Contoh: Juliet Capulet, S.Kom."
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- Section: Waktu & Tempat -->
+          <div class="bg-surface p-6 rounded-2xl border border-gray-100">
+            <div class="flex items-center gap-3 mb-6 text-secondary">
+              <i class="ph-duotone ph-calendar-check text-2xl"></i>
+              <h2 class="font-serif font-bold text-xl text-dark">Waktu & Tempat</h2>
+            </div>
+
+            <div class="space-y-5">
+              <div>
+                <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Tanggal Acara</label>
+                <input type="date" x-model="data.date" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-secondary focus:ring-4 focus:ring-secondary/10 outline-none text-sm bg-white" />
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Jam Mulai</label>
+                  <input type="time" x-model="data.timeStart" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-secondary focus:ring-4 focus:ring-secondary/10 outline-none text-sm bg-white" />
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Jam Selesai</label>
+                  <input type="time" x-model="data.timeEnd" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-secondary focus:ring-4 focus:ring-secondary/10 outline-none text-sm bg-white" />
+                </div>
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Lokasi / Gedung</label>
+                <textarea
+                  x-model="data.location"
+                  rows="2"
+                  class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-secondary focus:ring-4 focus:ring-secondary/10 outline-none text-sm bg-white"
+                  placeholder="Grand Ballroom Hotel Indonesia..."
+                ></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section: Kutipan -->
+          <div class="bg-surface p-6 rounded-2xl border border-gray-100">
+            <div class="flex items-center gap-3 mb-6 text-gray-500">
+              <i class="ph-duotone ph-quotes text-2xl"></i>
+              <h2 class="font-serif font-bold text-xl text-dark">Kutipan</h2>
+            </div>
+            <textarea
+              x-model="data.quote"
+              rows="4"
+              class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-gray-400 focus:ring-4 focus:ring-gray-100 outline-none transition-all text-sm bg-white"
+              placeholder="Tulis kutipan indah di sini..."
+            ></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT PANEL: LIVE PREVIEW (Hero Pattern Background) -->
+      <div :class="showPreviewMobile ? 'block fixed inset-0 z-40 bg-gray-50' : 'hidden md:flex'" class="w-full md:w-1/2 lg:w-7/12 h-full items-center justify-center p-4 md:p-8 relative overflow-hidden hero-pattern">
+        <!-- PREVIEW CONTAINER -->
+        <div
+          class="preview-container bg-white shadow-2xl relative overflow-hidden transition-all duration-500 flex flex-col"
+          :class="viewMode === 'mobile' 
+                    ? 'w-[340px] h-[600px] rounded-[2rem] border-8 border-gray-800' 
+                    : 'w-full max-w-[90%] aspect-[4/3] rounded-xl border border-gray-300'"
+        >
+          <!-- CONTENT INSIDE PREVIEW -->
+          <div
+            :class="{
+                    'bg-theme-botanic': currentThemeId === 'botanic',
+                    'bg-theme-luxury': currentThemeId === 'luxury',
+                    'bg-theme-traditional': currentThemeId === 'traditional',
+                    'bg-theme-floral': currentThemeId === 'floral',
+                    'bg-theme-minimalist': currentThemeId === 'minimalist',
+                }"
+            class="w-full h-full flex flex-col relative p-4 md:p-8"
+          >
+            <!-- Main Content Wrapper -->
+            <div class="flex-grow flex flex-col justify-evenly items-center text-center w-full">
+              <p class="uppercase tracking-[0.2em] text-[8px] md:text-xs font-sans text-gray-500 shrink-0 mt-1" :class="currentThemeId === 'luxury' ? 'text-yellow-600' : ''">The Wedding Celebration Of</p>
+
+              <!-- GROUP: MEMPELAI -->
+              <div class="flex flex-col items-center justify-center gap-2 md:gap-4 w-full">
+                <!-- GROOM -->
+                <div class="flex flex-col items-center">
+                  <h2
+                    class="font-script leading-none mb-0.5"
+                    :class="viewMode === 'mobile' ? 'text-3xl' : 'text-4xl md:text-5xl'"
+                    style="font-family: 'Great Vibes', cursive;"
+                    :style="{ color: data.textColor }"
+                  >
+                    <span x-text="data.groomNick || 'Romeo'"></span>
+                  </h2>
+                  <p
+                    class="font-serif tracking-wide text-gray-600"
+                    :class="[currentThemeId === 'luxury' ? 'text-gray-300' : '', viewMode === 'mobile' ? 'text-[10px]' : 'text-xs md:text-sm']"
+                    x-text="data.groomFull || 'Romeo Montague, S.T.'"
+                  ></p>
+                </div>
+
+                <!-- AMPERSAND -->
+                <div
+                  class="font-serif text-gray-300 leading-none"
+                  :class="viewMode === 'mobile' ? 'text-xl' : 'text-2xl'"
+                  :style="{ color: data.textColor, opacity: 0.5 }"
+                >
+                  &
+                </div>
+
+                <!-- BRIDE -->
+                <div class="flex flex-col items-center">
+                  <h2
+                    class="font-script leading-none mb-0.5"
+                    :class="viewMode === 'mobile' ? 'text-3xl' : 'text-4xl md:text-5xl'"
+                    style="font-family: 'Great Vibes', cursive;"
+                    :style="{ color: data.textColor }"
+                  >
+                    <span x-text="data.brideNick || 'Juliet'"></span>
+                  </h2>
+                  <p
+                    class="font-serif tracking-wide text-gray-600"
+                    :class="[currentThemeId === 'luxury' ? 'text-gray-300' : '', viewMode === 'mobile' ? 'text-[10px]' : 'text-xs md:text-sm']"
+                    x-text="data.brideFull || 'Juliet Capulet, S.Kom.'"
+                  ></p>
+                </div>
+              </div>
+
+              <!-- DIVIDER -->
+              <div class="h-px bg-gray-200 w-1/3 my-2" :style="{ backgroundColor: data.textColor, opacity: 0.3 }"></div>
+
+              <!-- TANGGAL -->
+              <div class="w-full shrink-0">
+                <div class="inline-block border-y border-gray-200 py-1.5 px-6" :class="currentThemeId === 'luxury' ? 'border-yellow-900/50' : ''">
+                  <p class="font-serif text-dark font-bold" :class="viewMode === 'mobile' ? 'text-xs' : 'text-sm md:text-lg'" x-text="formatDate(data.date)"></p>
+                </div>
+              </div>
+
+              <!-- LOKASI GRID -->
+              <div class="w-full max-w-lg shrink-0" :class="viewMode === 'mobile' ? 'flex flex-col gap-2' : 'grid grid-cols-2 gap-8'">
+                <div class="text-center">
+                  <h4 class="font-bold text-dark text-[10px] mb-0.5 uppercase tracking-wide">Waktu</h4>
+                  <p class="text-gray-500 text-[10px] md:text-xs" x-text="(data.timeStart || '08:00') + ' - ' + (data.timeEnd || 'Selesai') + ' WIB'"></p>
+                </div>
+                <div class="text-center">
+                  <h4 class="font-bold text-dark text-[10px] mb-0.5 uppercase tracking-wide">Lokasi</h4>
+                  <p class="text-gray-500 text-[10px] md:text-xs leading-snug px-2" x-text="data.location || 'Lokasi acara belum diisi'"></p>
+                </div>
+              </div>
+
+              <!-- Quote -->
+              <div class="bg-white/50 backdrop-blur-sm p-3 rounded-lg border border-gray-100 shadow-sm w-full max-w-md mx-auto shrink-0 mt-1">
+                <i class="ph-fill ph-quotes text-lg mb-1 block opacity-30" :style="{ color: data.textColor }"></i>
+                <p class="text-gray-600 text-[9px] md:text-[10px] italic leading-relaxed font-serif" x-text="data.quote || 'Tulis kutipan indah di sini...'"></p>
+              </div>
+            </div>
+
+            <div class="text-center mt-1 text-[8px] text-gray-400 tracking-widest uppercase shrink-0">Powered by UndangAja</div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Preview Undangan - UndangAja</title>
+
+    <!-- 1. FONT: Plus Jakarta Sans, Playfair Display, Great Vibes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Great+Vibes&display=swap" rel="stylesheet" />
+
+    <!-- 2. ICON: Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- 3. STYLE: Tailwind CSS & Custom Files -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Link ke Custom CSS -->
+    <link rel="stylesheet" href="style.css" />
+    <!-- Link ke Custom JS (Tailwind Config, Logic, & Components) -->
+    <script src="style.js"></script>
+
+    <!-- 4. LIBRARIES: AOS, Alpine.js, SweetAlert2, html2canvas -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  </head>
+
+  <body class="font-sans text-gray-600 bg-surface antialiased overflow-x-hidden" x-data="previewPage()" @scroll.window="scrolled = (window.pageYOffset > 20)">
+    
+    <!-- NAVBAR -->
+    <nav :class="scrolled ? 'bg-white/80 backdrop-blur-md shadow-sm py-4' : 'bg-transparent py-6'" class="fixed w-full top-0 z-50 transition-all duration-300">
+      <div class="container mx-auto px-6 flex justify-between items-center">
+        <!-- Logo -->
+        <a href="index.html" class="flex items-center gap-2 group">
+          <div class="w-10 h-10 bg-primary text-white rounded-xl flex items-center justify-center text-2xl group-hover:rotate-12 transition-transform duration-300">
+            <i class="ph-bold ph-heart"></i>
+          </div>
+          <span class="text-xl font-bold text-dark tracking-tight">Undang<span class="text-secondary">Aja</span></span>
+        </a>
+
+        <!-- Desktop Menu -->
+        <div class="hidden md:flex items-center gap-8 font-medium text-sm text-gray-500">
+          <a href="index.html" class="hover:text-primary transition-colors">Beranda</a>
+          <a href="catalog.html" class="text-primary font-bold">Katalog Tema</a>
+          <a href="testimoni.html" class="hover:text-primary transition-colors">Testimoni</a>
+        </div>
+
+        <!-- CTA Button -->
+        <div class="hidden md:block">
+          <a href="catalog.html" class="bg-dark text-white px-6 py-2.5 rounded-full font-medium text-sm hover:bg-gray-800 transition-all hover:shadow-lg transform hover:-translate-y-0.5"> Buat Undangan </a>
+        </div>
+
+        <!-- Mobile Hamburger -->
+        <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden text-2xl text-dark">
+          <i :class="mobileMenuOpen ? 'ph ph-x' : 'ph ph-list'"></i>
+        </button>
+      </div>
+
+      <!-- Mobile Menu Dropdown -->
+      <div x-show="mobileMenuOpen" x-transition class="md:hidden bg-white border-t absolute w-full shadow-xl">
+        <div class="flex flex-col p-6 gap-4 font-medium">
+          <a href="index.html" class="text-gray-600">Beranda</a>
+          <a href="catalog.html" class="text-gray-600">Katalog Tema</a>
+          <a href="testimoni.html" class="text-gray-600">Testimoni</a>
+          <a href="editor.html" class="bg-primary text-white text-center py-3 rounded-lg">Buat Undangan</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- HERO SECTION (Header) -->
+    <section class="hero-pattern pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden relative">
+      <div class="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-secondary/10 rounded-full blur-3xl mix-blend-multiply animate-pulse"></div>
+      <div class="absolute bottom-0 left-0 -ml-20 -mb-20 w-96 h-96 bg-primary/10 rounded-full blur-3xl mix-blend-multiply animate-pulse" style="animation-delay: 2s"></div>
+
+      <div class="container mx-auto px-6 relative z-10">
+        <div class="text-center max-w-3xl mx-auto mb-16" data-aos="fade-up">
+          <div class="inline-flex items-center gap-2 bg-white border border-gray-200 rounded-full px-4 py-1.5 mb-6 shadow-sm">
+            <span class="flex h-2 w-2 rounded-full bg-green-500 animate-pulse"></span>
+            <span class="text-xs font-semibold text-gray-500 tracking-wide uppercase">Siap Disebarkan</span>
+          </div>
+          <h1 class="font-serif text-4xl lg:text-6xl font-bold text-dark leading-tight mb-6">
+            Undangan Anda <br />
+            <span class="italic text-secondary">Telah Siap.</span>
+          </h1>
+          <p class="text-lg text-gray-500 mb-8">Berikut adalah hasil undangan digital Anda dalam format Default dan Mobile. Unduh atau edit kembali jika diperlukan.</p>
+
+          <!-- BUTTON EDIT -->
+          <a href="editor.html" class="inline-flex items-center gap-2 px-8 py-3 bg-white text-dark border-2 border-gray-100 rounded-full font-bold hover:border-dark hover:bg-gray-50 transition-all mt-4">
+            <i class="ph-bold ph-pencil-simple"></i> Edit Kembali Undangan
+          </a>
+        </div>
+
+        <!-- PREVIEW AREA -->
+        <div class="flex flex-col xl:flex-row gap-12 items-center xl:items-start justify-center">
+          
+          <!-- 1. DESKTOP PREVIEW CARD -->
+          <div class="flex flex-col items-center w-full max-w-[1000px]" data-aos="fade-right" data-aos-delay="100">
+            <div class="mb-4 flex items-center gap-2 text-sm font-bold text-gray-400 uppercase tracking-widest"><i class="ph-fill ph-monitor"></i> Tampilan Default</div>
+
+            <div
+              id="capture-desktop"
+              class="shadow-2xl rounded-2xl overflow-hidden relative w-full aspect-[4/3] flex flex-col items-center justify-between p-8 md:p-12 border border-gray-100"
+              :class="{
+                            'bg-theme-botanic': currentThemeId === 'botanic',
+                            'bg-theme-luxury': currentThemeId === 'luxury',
+                            'bg-theme-traditional': currentThemeId === 'traditional',
+                            'bg-theme-floral': currentThemeId === 'floral',
+                            'bg-theme-minimalist': currentThemeId === 'minimalist',
+                        }"
+            >
+              <!-- Content -->
+              <div class="w-full h-full flex flex-col justify-between items-center text-center">
+                
+                <!-- Divider/Decoration Top -->
+                <div class="w-full h-12 flex justify-center items-start shrink-0" x-show="currentThemeId === 'botanic'">
+                  <img src="https://img.freepik.com/free-vector/hand-drawn-floral-divider_23-2149520865.jpg?w=1000" class="h-full object-contain mix-blend-multiply opacity-50" />
+                </div>
+
+                <div class="flex-grow flex flex-col justify-center gap-2 w-full">
+                  <p class="uppercase tracking-[0.2em] text-[10px] md:text-xs font-sans text-gray-500" :class="currentThemeId === 'luxury' ? 'text-yellow-600' : ''">The Wedding Celebration Of</p>
+
+                  <div class="flex flex-col items-center justify-center gap-1 md:gap-2">
+                    <h2 class="font-script text-5xl md:text-6xl leading-none mb-1" style="font-family: 'Great Vibes', cursive" :style="{ color: data.textColor }">
+                      <span x-text="data.groomNick"></span>
+                    </h2>
+                    <p class="font-serif text-xs md:text-sm tracking-wide text-gray-600" :class="currentThemeId === 'luxury' ? 'text-gray-300' : ''" x-text="data.groomFull"></p>
+
+                    <div class="font-serif text-2xl text-gray-300 opacity-50 my-1">&</div>
+
+                    <h2 class="font-script text-5xl md:text-6xl leading-none mb-1" style="font-family: 'Great Vibes', cursive" :style="{ color: data.textColor }">
+                      <span x-text="data.brideNick"></span>
+                    </h2>
+                    <p class="font-serif text-xs md:text-sm tracking-wide text-gray-600" :class="currentThemeId === 'luxury' ? 'text-gray-300' : ''" x-text="data.brideFull"></p>
+                  </div>
+
+                  <div class="w-full my-3 md:my-5">
+                    <div class="inline-block border-y border-gray-200 py-2 px-8" :class="currentThemeId === 'luxury' ? 'border-yellow-900/50' : ''">
+                      <p class="font-serif text-lg md:text-xl text-dark font-bold" x-text="formatDate(data.date)"></p>
+                    </div>
+                  </div>
+
+                  <div class="grid grid-cols-2 gap-8 w-full max-w-sm mx-auto">
+                    <div>
+                      <h4 class="font-bold text-dark text-xs uppercase mb-1">Waktu</h4>
+                      <p class="text-gray-500 text-xs md:text-sm" x-text="(data.timeStart || '08:00') + ' - ' + (data.timeEnd || 'Selesai') + ' WIB'"></p>
+                    </div>
+                    <div>
+                      <h4 class="font-bold text-dark text-xs uppercase mb-1">Lokasi</h4>
+                      <p class="text-gray-500 text-xs md:text-sm px-1 leading-tight" x-text="data.location"></p>
+                    </div>
+                  </div>
+
+                  <!-- Quote Container -->
+                  <div class="bg-white/50 backdrop-blur-sm p-4 rounded-xl border border-gray-100 shadow-sm w-full max-w-lg mx-auto shrink-0 mt-4">
+                    <i class="ph-fill ph-quotes text-xl mb-1 block opacity-30" :style="{ color: data.textColor }"></i>
+                    <p class="text-gray-600 text-xs md:text-sm italic leading-relaxed font-serif" x-text="data.quote || 'Tulis kutipan indah di sini...'"></p>
+                  </div>
+                </div>
+
+                <div class="mt-4 text-[10px] text-gray-400 uppercase tracking-widest font-bold">Powered by UndangAja</div>
+              </div>
+            </div>
+
+            <!-- Button Save -->
+            <button
+              @click="downloadImage('capture-desktop', 'Undangan-Desktop')"
+              class="w-full mt-6 bg-primary text-white py-3.5 rounded-xl font-bold hover:bg-primaryDark transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2 transform hover:-translate-y-0.5"
+            >
+              <i class="ph-bold ph-download-simple"></i> Simpan Gambar
+            </button>
+          </div>
+
+          <!-- 2. MOBILE PREVIEW CARD -->
+          <div class="flex flex-col items-center w-full max-w-[320px]" data-aos="fade-left" data-aos-delay="200">
+            <div class="mb-4 flex items-center gap-2 text-sm font-bold text-gray-400 uppercase tracking-widest"><i class="ph-fill ph-device-mobile"></i> Tampilan Mobile</div>
+
+            <div
+              id="capture-mobile"
+              class="shadow-2xl rounded-3xl overflow-hidden relative w-full h-auto min-h-[650px] flex flex-col items-center justify-between p-6 border border-gray-100"
+              :class="{
+                            'bg-theme-botanic': currentThemeId === 'botanic',
+                            'bg-theme-luxury': currentThemeId === 'luxury',
+                            'bg-theme-traditional': currentThemeId === 'traditional',
+                            'bg-theme-floral': currentThemeId === 'floral',
+                            'bg-theme-minimalist': currentThemeId === 'minimalist',
+                        }"
+            >
+              <!-- Content Mobile -->
+              <div class="w-full h-full flex flex-col justify-between items-center text-center gap-5">
+                
+                <div class="w-full h-10 flex justify-center items-start shrink-0" x-show="currentThemeId === 'botanic'">
+                  <img src="https://img.freepik.com/free-vector/hand-drawn-floral-divider_23-2149520865.jpg?w=1000" class="h-full object-contain mix-blend-multiply opacity-50" />
+                </div>
+
+                <div class="flex-grow flex flex-col justify-center gap-5 w-full">
+                  <p class="uppercase tracking-[0.2em] text-[10px] font-sans text-gray-500" :class="currentThemeId === 'luxury' ? 'text-yellow-600' : ''">The Wedding Celebration Of</p>
+
+                  <div class="flex flex-col gap-3">
+                    <div>
+                      <h2 class="font-script text-4xl leading-none mb-1" style="font-family: 'Great Vibes', cursive" :style="{ color: data.textColor }">
+                        <span x-text="data.groomNick"></span>
+                      </h2>
+                      <p class="font-serif text-[10px] tracking-wide text-gray-600" :class="currentThemeId === 'luxury' ? 'text-gray-300' : ''" x-text="data.groomFull"></p>
+                    </div>
+                    <div class="font-serif text-xl text-gray-300 opacity-50">&</div>
+                    <div>
+                      <h2 class="font-script text-4xl leading-none mb-1" style="font-family: 'Great Vibes', cursive" :style="{ color: data.textColor }">
+                        <span x-text="data.brideNick"></span>
+                      </h2>
+                      <p class="font-serif text-[10px] tracking-wide text-gray-600" :class="currentThemeId === 'luxury' ? 'text-gray-300' : ''" x-text="data.brideFull"></p>
+                    </div>
+                  </div>
+
+                  <div class="w-full">
+                    <div class="inline-block border-y border-gray-200 py-1.5 px-6" :class="currentThemeId === 'luxury' ? 'border-yellow-900/50' : ''">
+                      <p class="font-serif text-sm text-dark font-bold" x-text="formatDate(data.date)"></p>
+                    </div>
+                  </div>
+
+                  <div class="flex flex-col gap-3 w-full">
+                    <div>
+                      <h4 class="font-bold text-dark text-[10px] uppercase mb-0.5">Waktu</h4>
+                      <p class="text-gray-500 text-[10px]" x-text="(data.timeStart || '08:00') + ' - ' + (data.timeEnd || 'Selesai') + ' WIB'"></p>
+                    </div>
+                    <div>
+                      <h4 class="font-bold text-dark text-[10px] uppercase mb-0.5">Lokasi</h4>
+                      <p class="text-gray-500 text-[10px] px-2 leading-tight" x-text="data.location"></p>
+                    </div>
+                  </div>
+
+                  <div class="bg-white/50 backdrop-blur-sm p-3 rounded-lg border border-gray-100 shadow-sm w-full max-w-xs mx-auto shrink-0 mt-2">
+                    <i class="ph-fill ph-quotes text-lg mb-1 block opacity-30" :style="{ color: data.textColor }"></i>
+                    <p class="text-gray-600 text-[10px] italic leading-relaxed font-serif" x-text="data.quote || 'Tulis kutipan indah di sini...'"></p>
+                  </div>
+                </div>
+
+                <div class="mt-4 text-[8px] text-gray-400 uppercase tracking-widest font-bold">Powered by UndangAja</div>
+              </div>
+            </div>
+
+            <!-- Button Save -->
+            <button
+              @click="downloadImage('capture-mobile', 'Undangan-Mobile')"
+              class="w-full mt-6 bg-primary text-white py-3.5 rounded-xl font-bold hover:bg-primaryDark transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2 transform hover:-translate-y-0.5"
+            >
+              <i class="ph-bold ph-download-simple"></i> Simpan Gambar
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- THANK YOU CARD -->
+    <section class="py-24 bg-white">
+      <div class="container mx-auto px-6">
+        <div class="bg-primary rounded-[3rem] p-10 md:p-20 text-center relative overflow-hidden" data-aos="zoom-in">
+          <!-- Decorative Circles -->
+          <div class="absolute top-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
+          <div class="absolute bottom-0 left-0 w-64 h-64 bg-black opacity-10 rounded-full translate-y-1/2 -translate-x-1/2"></div>
+
+          <div class="relative z-10 max-w-3xl mx-auto">
+            <!-- Icon -->
+            <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mx-auto mb-8 shadow-lg text-secondary text-3xl">
+              <i class="ph-fill ph-heart"></i>
+            </div>
+
+            <h2 class="font-serif text-3xl md:text-5xl font-bold text-white mb-6">Terima Kasih Telah Bergabung</h2>
+            <p class="text-green-100 text-lg mb-10 leading-relaxed">
+              Kami sangat senang bisa menjadi bagian kecil dari perjalanan besar Anda. Semoga undangan ini menjadi awal dari cerita indah yang tak terlupakan bersama orang-orang terkasih.
+            </p>
+
+            <div class="flex justify-center gap-6">
+              <a href="index.html" class="bg-secondary text-white px-8 py-4 rounded-full font-bold hover:bg-yellow-600 transition-colors shadow-lg shadow-yellow-900/20"> Kembali ke Beranda </a>
+              <a href="catalog.html" class="bg-transparent border border-green-200 text-white px-8 py-4 rounded-full font-bold hover:bg-white/10 transition-colors"> Buat Undangan Baru </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-white border-t border-gray-100 pt-16 pb-8">
+      <div class="container mx-auto px-6">
+        <div class="grid md:grid-cols-4 gap-12 mb-12">
+          <div class="col-span-1 md:col-span-1">
+            <a href="#" class="flex items-center gap-2 mb-6">
+              <div class="w-8 h-8 bg-primary text-white rounded-lg flex items-center justify-center text-lg">
+                <i class="ph-bold ph-heart"></i>
+              </div>
+              <span class="text-xl font-bold text-dark tracking-tight">Undang<span class="text-secondary">Aja</span></span>
+            </a>
+            <p class="text-gray-400 text-sm leading-relaxed">Platform undangan digital #1 di Indonesia. Membantu pasangan merayakan cinta dengan cara yang lebih modern.</p>
+          </div>
+
+          <div>
+            <h5 class="font-bold text-dark mb-4">Tautan Cepat</h5>
+            <ul class="space-y-3 text-sm text-gray-500">
+              <li><a href="index.html" class="hover:text-primary">Beranda</a></li>
+              <li><a href="catalog.html" class="hover:text-primary">Katalog Tema</a></li>
+              <li><a href="testimoni.html" class="hover:text-primary">Testimoni</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <h5 class="font-bold text-dark mb-4">Sosial Media</h5>
+            <div class="flex gap-4">
+              <a
+                href="https://www.instagram.com/momo.photograph_?igsh=bXlubGhsdnZ6cnl0"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-primary hover:text-white transition-colors"
+              >
+                <i class="ph-fill ph-instagram-logo text-xl"></i>
+              </a>
+              <a
+                href="https://www.tiktok.com/@justlucian_?_r=1&_t=ZS-92oeFqxxYlG"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-primary hover:text-white transition-colors"
+              >
+                <i class="ph-fill ph-tiktok-logo text-xl"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="border-t border-gray-100 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-400">
+          <p>&copy; 2026 UndangAja. All rights reserved.</p>
+          <div class="flex gap-6">
+            <p>Dibuat Oleh Irfan & Rehan</p>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
