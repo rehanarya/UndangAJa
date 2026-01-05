@@ -1,4 +1,4 @@
-/* --- GLOBAL STYLES --- */
+/* GLOBAL STYLES */
 .text-gradient {
   background: linear-gradient(135deg, #5d7066 0%, #3b4b44 100%);
   background-clip: text;
@@ -6,40 +6,86 @@
   -webkit-text-fill-color: transparent;
 }
 
+/* Pattern background - better mobile look */
 .hero-pattern {
   background-color: #fafaf9;
   background-image: radial-gradient(#e7e5e4 1px, transparent 1px);
-  background-size: 32px 32px;
+  background-size: 24px 24px;
 }
 
-/* --- EDITOR & PREVIEW SPECIFIC STYLES --- */
-.no-scrollbar::-webkit-scrollbar { display: none; }
-.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+@media (min-width: 768px) {
+  .hero-pattern {
+    background-size: 32px 32px;
+  }
+}
+
+/* UTILITIES */
+.delay-2000 {
+  animation-delay: 2s;
+}
+
+/* EDITOR & PREVIEW SPECIFIC STYLES */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
 
 .preview-container {
-    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-[x-text] { transition: all 0.2s ease; }
-
-/* --- DYNAMIC THEME BACKGROUNDS --- */
-/* Menggunakan !important untuk memastikan override style default */
-.bg-theme-botanic { 
-    background-color: #FAFAF9 !important; 
-    background-image: radial-gradient(#E7E5E4 1px, transparent 1px); 
-    background-size: 24px 24px; 
+[x-text] {
+  transition: all 0.2s ease;
 }
 
-.bg-theme-luxury { 
-    background-color: #1C1917 !important; 
-    color: #D4AF37 !important; 
+/* DYNAMIC THEME BACKGROUNDS */
+.bg-theme-botanic {
+  background-color: #FAFAF9 !important;
+  background-image: radial-gradient(#E7E5E4 1px, transparent 1px);
+  background-size: 24px 24px;
 }
-.bg-theme-luxury .text-dark { color: #D4AF37 !important; } 
-.bg-theme-luxury .text-gray-500 { color: #9CA3AF !important; }
-.bg-theme-luxury .text-gray-600 { color: #D1D5DB !important; }
-.bg-theme-luxury .border-gray-200 { border-color: #333 !important; }
-.bg-theme-luxury .border-gray-100 { border-color: #333 !important; }
 
-.bg-theme-floral { background-color: #FFF0F5 !important; }
-.bg-theme-traditional { background-color: #FDF5E6 !important; border: 12px solid #8B4513; }
-.bg-theme-minimalist { background-color: #FFFFFF !important; }
+.bg-theme-luxury {
+  background-color: #1C1917 !important;
+  color: #D4AF37 !important;
+}
+.bg-theme-luxury .text-dark {
+  color: #D4AF37 !important;
+}
+.bg-theme-luxury .text-gray-500 {
+  color: #9CA3AF !important;
+}
+.bg-theme-luxury .text-gray-600 {
+  color: #D1D5DB !important;
+}
+.bg-theme-luxury .border-gray-200 {
+  border-color: #333 !important;
+}
+.bg-theme-luxury .border-gray-100 {
+  border-color: #333 !important;
+}
+
+.bg-theme-floral {
+  background-color: #FFF0F5 !important;
+}
+.bg-theme-traditional {
+  background-color: #FDF5E6 !important;
+  border: 12px solid #8B4513;
+}
+.bg-theme-minimalist {
+  background-color: #FFFFFF !important;
+}
+
+/* CUSTOM SCALING UNTUK PREVIEW MOBILE */
+.preview-desktop-on-mobile {
+  transform: scale(0.45);
+  transform-origin: top left;
+  width: 222.22%; 
+  height: 222.22%; 
+  position: absolute;
+  top: 0;
+  left: 0;
+}
